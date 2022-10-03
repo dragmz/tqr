@@ -5,10 +5,10 @@ import (
 )
 
 const (
-	BW = "▄"
-	BB = " "
-	WB = "▀"
-	WW = "█"
+	bw = "▄"
+	bb = " "
+	wb = "▀"
+	ww = "█"
 )
 
 type Qr struct {
@@ -43,7 +43,7 @@ func (q *Qr) String() string {
 	s += " "
 
 	for i := 0; i < q.Width+2; i++ {
-		s += BW
+		s += bw
 	}
 
 	s += "\n "
@@ -62,25 +62,25 @@ func (q *Qr) String() string {
 			}
 
 			if x == 0 {
-				s += WW
+				s += ww
 			}
 
 			if v {
 				if nv {
-					s += BB
+					s += bb
 				} else {
-					s += BW
+					s += bw
 				}
 			} else {
 				if nv {
-					s += WB
+					s += wb
 				} else {
-					s += WW
+					s += ww
 				}
 			}
 
 			if x == q.Width-1 {
-				s += WW
+				s += ww
 			}
 		}
 
