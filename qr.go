@@ -11,10 +11,33 @@ const (
 	ww = "█"
 )
 
+var (
+	dark  = [4]string{bw, bb, wb, ww}
+	light = [4]string{wb, ww, bw, bb}
+)
+
+const (
+	io = 0
+	ii = 1
+	oi = 2
+	oo = 3
+)
+
 type Qr struct {
 	Width  int
 	Height int
 	Values []bool
+
+	items  [4]string
+	invert bool
+}
+
+type Option func(q *Qr)
+
+func Invert() Option {
+	return func(q *Qr) {
+		q.invert = true
+	}
 }
 
 func (q *Qr) Write(mat qrcode.Matrix) error {
@@ -43,7 +66,9 @@ func (q *Qr) String() string {
 	s += " "
 
 	for i := 0; i < q.Width+2; i++ {
-		s += bw
+		if !q.invert {
+			s += q.items[io]
+		}
 	}
 
 	s += "\n "
@@ -62,25 +87,25 @@ func (q *Qr) String() string {
 			}
 
 			if x == 0 {
-				s += ww
+				s += q.items[oo]
 			}
 
 			if v {
 				if nv {
-					s += bb
+					s += q.items[ii]
 				} else {
-					s += bw
+					s += q.items[io]
 				}
 			} else {
 				if nv {
-					s += wb
+					s += q.items[oi]
 				} else {
-					s += ww
+					s += q.items[oo]
 				}
 			}
 
 			if x == q.Width-1 {
-				s += ww
+				s += q.items[oo]
 			}
 		}
 
@@ -90,8 +115,18 @@ func (q *Qr) String() string {
 	return s
 }
 
-func New(value string) *Qr {
+func New(value string, opts ...Option) *Qr {
 	q := &Qr{}
+
+	for _, opt := range opts {
+		opt(q)
+	}
+
+	if q.invert {
+		q.items = light
+	} else {
+		q.items = dark
+	}
 
 	qrc, _ := qrcode.New(value)
 	qrc.Save(q)
