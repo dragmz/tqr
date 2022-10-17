@@ -128,7 +128,9 @@ func New(value string, opts ...Option) *Qr {
 		q.items = dark
 	}
 
-	qrc, _ := qrcode.New(value)
+	qrc, _ := qrcode.NewWith(value,
+		qrcode.WithErrorCorrectionLevel(qrcode.ErrorCorrectionLow),
+	)
 	qrc.Save(q)
 
 	return q
